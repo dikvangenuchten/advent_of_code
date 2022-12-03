@@ -1,37 +1,37 @@
 pub fn solve(input: &str) -> (u32, u32) {
     let part_1 = solve_part_1(input);
     let part_2 = solve_part_2(input);
-    return (part_1, part_2);
+    (part_1, part_2)
 }
 
 fn solve_part_1(input_str: &str) -> u32 {
     input_str
-        .split("\n")
-        .map(|round_str| calculate_round_score_part_1(round_str))
+        .split('\n')
+        .map(calculate_round_score_part_1)
         .sum()
 }
 
 fn solve_part_2(input_str: &str) -> u32 {
     input_str
-        .split("\n")
-        .map(|round_str| calculate_round_score_part_2(round_str))
+        .split('\n')
+        .map(calculate_round_score_part_2)
         .sum()
 }
 
 fn calculate_round_score_part_1(round_str: &str) -> u32 {
     match round_str {
         // Win
-        "A Y" => 6 + 2,
-        "B Z" => 6 + 3,
-        "C X" => 6 + 1,
+        "A Y" => 8,
+        "B Z" => 9,
+        "C X" => 7,
         // Draw
-        "A X" => 3 + 1,
-        "B Y" => 3 + 2,
-        "C Z" => 3 + 3,
+        "A X" => 4,
+        "B Y" => 5,
+        "C Z" => 6,
         // Lose
-        "A Z" => 0 + 3,
-        "B X" => 0 + 1,
-        "C Y" => 0 + 2,
+        "A Z" => 3,
+        "B X" => 1,
+        "C Y" => 2,
         _ => unreachable!("Invalid input"),
     }
 }
@@ -39,17 +39,17 @@ fn calculate_round_score_part_1(round_str: &str) -> u32 {
 fn calculate_round_score_part_2(round_str: &str) -> u32 {
     match round_str {
         // Win
-        "A Y" => 3 + 1,
-        "B Z" => 6 + 3,
-        "C X" => 0 + 2,
+        "A Y" => 4,
+        "B Z" => 9,
+        "C X" => 2,
         // Draw
-        "A X" => 0 + 3,
-        "B Y" => 3 + 2,
-        "C Z" => 6 + 1,
+        "A X" => 3,
+        "B Y" => 5,
+        "C Z" => 7,
         // Lose
-        "A Z" => 6 + 2,
-        "B X" => 0 + 1,
-        "C Y" => 3 + 3,
+        "A Z" => 8,
+        "B X" => 1,
+        "C Y" => 6,
         _ => unreachable!("Invalid input"),
     }
 }

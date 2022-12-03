@@ -1,7 +1,4 @@
-use advent_of_code_2022::{
-    days::{day_1, day_2, day_3},
-    read_day_input,
-};
+use advent_of_code_2022::days::{day_1, day_2, day_3, read_day_input};
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 

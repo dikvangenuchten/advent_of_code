@@ -1,27 +1,25 @@
 use std::collections::HashSet;
 
-use crate::days::read_day_input;
-
 pub fn solve(input: &str) -> (u32, u32) {
     let part_1 = solve_part_1(input);
-    let part_2 = solve_part_2(&input);
-    return (part_1, part_2);
+    let part_2 = solve_part_2(input);
+    (part_1, part_2)
 }
 
 fn solve_part_1(rugsack_contents: &str) -> u32 {
     rugsack_contents
-        .split("\n")
-        .map(|cont| find_duplicate(cont))
-        .map(|dup| calc_priority(dup))
+        .split('\n')
+        .map(find_duplicate)
+        .map(calc_priority)
         .sum::<u32>()
 }
 
 fn solve_part_2(input: &str) -> u32 {
-    let elfs = input.split("\n").collect::<Vec<&str>>();
+    let elfs = input.split('\n').collect::<Vec<&str>>();
     elfs[0..elfs.len()]
         .chunks(3)
         .map(|group| find_group_badge(&group.join("\n")))
-        .map(|badge| calc_priority(badge))
+        .map(calc_priority)
         .sum()
 }
 
@@ -41,13 +39,13 @@ fn calc_priority(item: char) -> u32 {
     if item.is_ascii_lowercase() {
         return item as u32 - 96;
     }
-    return item as u32 - 38;
+    item as u32 - 38
 }
 
 fn find_group_badge(group: &str) -> char {
     *group
         .trim()
-        .split("\n")
+        .split('\n')
         .map(|items| HashSet::<char>::from_iter(items.chars()))
         .reduce(|l, r| l.intersection(&r).cloned().collect::<HashSet<char>>())
         .expect("This should work")

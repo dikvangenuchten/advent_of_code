@@ -3,31 +3,31 @@ use std::collections::BinaryHeap;
 pub fn solve(input: &str) -> (u32, u32) {
     let part_1 = solve_part_1(input);
     let part_2 = solve_part_2(input);
-    return (part_1, part_2);
+    (part_1, part_2)
 }
 
 fn solve_part_1(input_str: &str) -> u32 {
     let max_calorie = calories_per_elf(input_str)
         .max()
         .expect("There should be atleast one value");
-    return max_calorie;
+    max_calorie
 }
 
 fn solve_part_2(input_str: &str) -> u32 {
     let mut calories_per_elf = calories_per_elf(input_str).collect::<BinaryHeap<u32>>();
-    return (0..3)
+    (0..3)
         .map(|_| {
             calories_per_elf
                 .pop()
                 .expect("Should contain more then 3 elfs worth")
         })
-        .sum();
+        .sum()
 }
 
 fn calories_per_elf(input_str: &str) -> impl Iterator<Item = u32> + '_ {
     input_str.split("\n\n").map(|elf_str| {
         elf_str
-            .split("\n")
+            .split('\n')
             .map(|food| {
                 food.parse::<u32>()
                     .expect("string should be parseable as int")
