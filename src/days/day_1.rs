@@ -1,3 +1,4 @@
+use crate::days::read_day_input;
 use std::{collections::BinaryHeap, fs};
 
 pub fn solve() -> (u32, u32) {
@@ -35,12 +36,6 @@ fn calories_per_elf(input_str: &str) -> impl Iterator<Item = u32> + '_ {
             })
             .sum::<u32>()
     })
-}
-
-fn read_day_input(day: &str) -> String {
-    let file_path = format!("inputs/{day}.txt");
-    let contents = fs::read_to_string(&file_path);
-    contents.expect(&format!("Could not load: {file_path}"))
 }
 
 #[cfg(test)]
