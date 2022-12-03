@@ -1,9 +1,6 @@
-use crate::days::read_day_input;
-
-pub fn solve() -> (u32, u32) {
-    let input = read_day_input("day_2");
-    let part_1 = solve_part_1(&input);
-    let part_2 = solve_part_2(&input);
+pub fn solve(input: &str) -> (u32, u32) {
+    let part_1 = solve_part_1(input);
+    let part_2 = solve_part_2(input);
     return (part_1, part_2);
 }
 
@@ -62,11 +59,6 @@ mod tests {
 
     use super::*;
     use rstest::*;
-
-    #[test]
-    fn test_read_day_input() {
-        read_day_input("day_2");
-    }
 
     #[rstest]
     #[case("A Y\nB X\nC Z")]

@@ -1,10 +1,9 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 use crate::days::read_day_input;
 
-pub fn solve() -> (u32, u32) {
-    let input = read_day_input("day_3");
-    let part_1 = solve_part_1(&input);
+pub fn solve(input: &str) -> (u32, u32) {
+    let part_1 = solve_part_1(input);
     let part_2 = solve_part_2(&input);
     return (part_1, part_2);
 }

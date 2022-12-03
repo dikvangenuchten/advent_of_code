@@ -1,10 +1,8 @@
-use crate::days::read_day_input;
-use std::{collections::BinaryHeap, fs};
+use std::collections::BinaryHeap;
 
-pub fn solve() -> (u32, u32) {
-    let input = read_day_input("day_1");
-    let part_1 = solve_part_1(&input);
-    let part_2 = solve_part_2(&input);
+pub fn solve(input: &str) -> (u32, u32) {
+    let part_1 = solve_part_1(input);
+    let part_2 = solve_part_2(input);
     return (part_1, part_2);
 }
 
@@ -42,11 +40,6 @@ fn calories_per_elf(input_str: &str) -> impl Iterator<Item = u32> + '_ {
 mod tests {
     use super::*;
     use rstest::*;
-
-    #[test]
-    fn test_read_day_input() {
-        read_day_input("day_1");
-    }
 
     #[rstest]
     #[case("1000\n2000\n3000\n\n4000\n\n5000\n6000\n\n7000\n8000\n9000\n\n10000")]

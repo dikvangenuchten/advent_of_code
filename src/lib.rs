@@ -1,6 +1,5 @@
-mod days;
+pub mod days;
 
-pub use days::day_1;
 use std::fs;
 
 pub fn add(left: usize, right: usize) -> usize {
