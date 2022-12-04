@@ -1,5 +1,3 @@
-use std::cmp::max;
-
 use itertools::Itertools;
 
 pub fn solve(input: &str) -> (usize, usize) {
@@ -9,13 +7,11 @@ pub fn solve(input: &str) -> (usize, usize) {
 }
 
 fn solve_part_1(input_str: &str) -> usize {
-    parse_input(input_str).filter(|a| check_overlap(&a)).count()
+    parse_input(input_str).filter(check_overlap).count()
 }
 
 fn solve_part_2(input_str: &str) -> usize {
-    parse_input(input_str)
-        .filter(|a| check_any_overlap(&a))
-        .count()
+    parse_input(input_str).filter(check_any_overlap).count()
 }
 
 fn check_overlap(assignment: &((u16, u16), (u16, u16))) -> bool {
@@ -29,20 +25,20 @@ fn check_any_overlap(assignment: &((u16, u16), (u16, u16))) -> bool {
 }
 
 fn parse_input(input_str: &str) -> impl Iterator<Item = ((u16, u16), (u16, u16))> + '_ {
-    input_str.split("\n").map(parse_elf_assignment)
+    input_str.split('\n').map(parse_elf_assignment)
 }
 
 fn parse_elf_assignment(elf_str: &str) -> ((u16, u16), (u16, u16)) {
     elf_str
-        .split(",")
-        .map(|section| parse_bounds(section))
+        .split(',')
+        .map(parse_bounds)
         .collect_tuple()
         .expect("elf should be assigned to 2 section ranges exactly")
 }
 
 fn parse_bounds(bound_str: &str) -> (u16, u16) {
     bound_str
-        .split("-")
+        .split('-')
         .map(|bound| bound.parse::<u16>().expect("Should be valid"))
         .collect_tuple::<(u16, u16)>()
         .expect("Bound should contain exact 2 u16")
