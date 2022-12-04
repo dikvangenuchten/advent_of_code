@@ -22,5 +22,5 @@ fn bench_day_4(c: &mut Criterion) {
     c.bench_function("day 4", |b| b.iter(|| day_4::solve(black_box(&input))));
 }
 
-criterion_group!(benches, bench_day_1, bench_day_2, bench_day_3);
+criterion_group!(benches, bench_day_1, bench_day_2, bench_day_3, bench_day_4);
 criterion_main!(benches);
