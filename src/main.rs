@@ -1,5 +1,5 @@
 mod days;
-use days::{day_1, day_2, day_3};
+use days::{day_1, day_2, day_3, day_4};
 
 use crate::days::read_day_input;
 
@@ -15,4 +15,8 @@ fn main() {
     let (day_3a, day_3b) = day_3::solve(&read_day_input("day_3"));
     println!("Solution for day_3a: {day_3a}");
     println!("Solution for day_3b: {day_3b}");
+
+    let (day_4a, day_4b) = day_4::solve(&read_day_input("day_4"));
+    println!("Solution for day_4a: {day_4a}");
+    println!("Solution for day_4b: {day_4b}");
 }
