@@ -1,9 +1,10 @@
-use std::cmp::min;
-
 use itertools::Itertools;
 use regex::Regex;
 
-use crate::days::read_day_input;
+type CrateStack = Vec<char>;
+type CrateStacks = Vec<CrateStack>;
+type Operation = (u32, u32, u32);
+type Operations = Vec<Operation>;
 
 pub fn solve(input: &str) -> (String, String) {
     let part_1 = solve_part_1(input);
@@ -35,13 +36,13 @@ fn solve_part_2(input_str: &str) -> String {
     String::from_iter(out)
 }
 
-fn parse_input(input_str: &str) -> (Vec<Vec<char>>, Vec<(u32, u32, u32)>) {
+fn parse_input(input_str: &str) -> (CrateStacks, Operations) {
     let mut i = 0;
-    let mut crates: Vec<Vec<char>> = vec![];
+    let mut crates: CrateStacks = vec![];
 
     // Parse crate stacks
     for _crate in input_str.chars().into_iter().chunks(4).into_iter() {
-        match _crate.collect::<Vec<char>>()[..] {
+        match _crate.collect::<CrateStack>()[..] {
             ['[', x, ']', end_char] => {
                 match crates.get_mut(i) {
                     Some(stack) => stack.insert(0, x),
@@ -76,35 +77,29 @@ fn parse_input(input_str: &str) -> (Vec<Vec<char>>, Vec<(u32, u32, u32)>) {
     (crates, operations)
 }
 
-fn apply_operations_p1(
-    mut crates: Vec<Vec<char>>,
-    operations: Vec<(u32, u32, u32)>,
-) -> Vec<Vec<char>> {
+fn apply_operations_p1(mut crates: CrateStacks, operations: Operations) -> CrateStacks {
     for operation in operations {
         crates = apply_operation_p1(crates, operation);
     }
     crates
 }
 
-fn apply_operation_p1(mut crates: Vec<Vec<char>>, operation: (u32, u32, u32)) -> Vec<Vec<char>> {
+fn apply_operation_p1(mut crates: CrateStacks, operation: Operation) -> CrateStacks {
     for _ in 0..operation.0 as usize {
         let _crate = crates[(operation.1 - 1) as usize].pop().unwrap();
         crates[(operation.2 - 1) as usize].push(_crate);
     }
-    return crates;
+    crates
 }
 
-fn apply_operations_p2(
-    mut crates: Vec<Vec<char>>,
-    operations: Vec<(u32, u32, u32)>,
-) -> Vec<Vec<char>> {
+fn apply_operations_p2(mut crates: CrateStacks, operations: Operations) -> CrateStacks {
     for operation in operations {
         crates = apply_operation_p2(crates, operation);
     }
     crates
 }
 
-fn apply_operation_p2(mut crates: Vec<Vec<char>>, operation: (u32, u32, u32)) -> Vec<Vec<char>> {
+fn apply_operation_p2(mut crates: CrateStacks, operation: Operation) -> CrateStacks {
     let mut intermediate_stack = vec![];
     for _ in 0..operation.0 as usize {
         let _crate = crates[(operation.1 - 1) as usize].pop().unwrap();
@@ -115,11 +110,13 @@ fn apply_operation_p2(mut crates: Vec<Vec<char>>, operation: (u32, u32, u32)) ->
         crates[(operation.2 - 1) as usize].push(_crate);
     }
 
-    return crates;
+    crates
 }
 
 #[cfg(test)]
 mod tests {
+
+    use crate::days::read_day_input;
 
     use super::*;
     use rstest::*;
@@ -130,7 +127,7 @@ mod tests {
     }
 
     #[fixture]
-    fn parsed_input() -> (Vec<Vec<char>>, Vec<(u32, u32, u32)>) {
+    fn parsed_input() -> (CrateStacks, Operations) {
         (
             vec![vec!['Z', 'N'], vec!['M', 'C', 'D'], vec!['P']],
             vec![(1, 2, 1), (3, 1, 3), (2, 2, 1), (1, 1, 2)],
@@ -138,7 +135,7 @@ mod tests {
     }
 
     #[rstest]
-    fn test_parse_input(input_str: String, parsed_input: (Vec<Vec<char>>, Vec<(u32, u32, u32)>)) {
+    fn test_parse_input(input_str: String, parsed_input: (CrateStacks, Operations)) {
         assert_eq!(parse_input(&input_str), parsed_input)
     }
 
@@ -166,9 +163,9 @@ mod tests {
 
     )]
     fn test_apply_operation_p1(
-        #[case] crates: Vec<Vec<char>>,
-        #[case] operation: (u32, u32, u32),
-        #[case] crates_after: Vec<Vec<char>>,
+        #[case] crates: CrateStacks,
+        #[case] operation: Operation,
+        #[case] crates_after: CrateStacks,
     ) {
         assert_eq!(apply_operation_p1(crates, operation), crates_after)
     }
@@ -177,7 +174,7 @@ mod tests {
     #[case(
         vec![vec!['C'], vec!['M'], vec!['P', 'D', 'N', 'Z']],
     )]
-    fn test_apply_operations_p1(input_str: String, #[case] expected: Vec<Vec<char>>) {
+    fn test_apply_operations_p1(input_str: String, #[case] expected: CrateStacks) {
         let (crates, operations) = parse_input(&input_str);
         assert_eq!(apply_operations_p1(crates, operations), expected)
     }
@@ -211,9 +208,9 @@ mod tests {
 
     )]
     fn test_apply_operation_p2(
-        #[case] crates: Vec<Vec<char>>,
-        #[case] operation: (u32, u32, u32),
-        #[case] crates_after: Vec<Vec<char>>,
+        #[case] crates: CrateStacks,
+        #[case] operation: Operation,
+        #[case] crates_after: CrateStacks,
     ) {
         assert_eq!(apply_operation_p2(crates, operation), crates_after)
     }
