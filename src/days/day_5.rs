@@ -6,14 +6,14 @@ type CrateStacks = Vec<CrateStack>;
 type Operation = (u32, u32, u32);
 type Operations = Vec<Operation>;
 
-pub fn solve(input: &str) -> (String, String) {
-    let part_1 = solve_part_1(input);
-    let part_2 = solve_part_2(input);
+pub fn solve(input_str: &str) -> (String, String) {
+    let (crates, operations) = parse_input(input_str);
+    let part_1 = solve_part_1(crates.clone(), &operations);
+    let part_2 = solve_part_2(crates, &operations);
     (part_1, part_2)
 }
 
-fn solve_part_1(input_str: &str) -> String {
-    let (crates, operations) = parse_input(input_str);
+fn solve_part_1(crates: CrateStacks, operations: &Operations) -> String {
     let crates = apply_operations_p1(crates, operations);
     let mut out = vec![];
     for mut _crate in crates {
@@ -24,8 +24,7 @@ fn solve_part_1(input_str: &str) -> String {
     String::from_iter(out)
 }
 
-fn solve_part_2(input_str: &str) -> String {
-    let (crates, operations) = parse_input(input_str);
+fn solve_part_2(crates: CrateStacks, operations: &Operations) -> String {
     let crates = apply_operations_p2(crates, operations);
     let mut out = vec![];
     for mut _crate in crates {
@@ -37,9 +36,24 @@ fn solve_part_2(input_str: &str) -> String {
 }
 
 fn parse_input(input_str: &str) -> (CrateStacks, Operations) {
+    let crates = extract_crate_part(input_str);
+    let re = Regex::new(r"move (\d+) from (\d+) to (\d+)").unwrap();
+    let operations = re
+        .captures_iter(input_str)
+        .map(|operation| {
+            (
+                operation.get(1).unwrap().as_str().parse::<u32>().unwrap(),
+                operation.get(2).unwrap().as_str().parse::<u32>().unwrap(),
+                operation.get(3).unwrap().as_str().parse::<u32>().unwrap(),
+            )
+        })
+        .collect_vec();
+    (crates, operations)
+}
+
+fn extract_crate_part(input_str: &str) -> Vec<Vec<char>> {
     let mut i = 0;
     let mut crates: CrateStacks = vec![];
-
     // Parse crate stacks
     for _crate in input_str.chars().into_iter().chunks(4).into_iter() {
         match _crate.collect::<CrateStack>()[..] {
@@ -64,27 +78,17 @@ fn parse_input(input_str: &str) -> (CrateStacks, Operations) {
             _ => break,
         };
     }
-    let re = Regex::new(r"move (\d+) from (\d+) to (\d+)").unwrap();
-    let mut operations = Vec::new();
-    // parse operations
-    for operation in re.captures_iter(input_str) {
-        operations.push((
-            operation.get(1).unwrap().as_str().parse::<u32>().unwrap(),
-            operation.get(2).unwrap().as_str().parse::<u32>().unwrap(),
-            operation.get(3).unwrap().as_str().parse::<u32>().unwrap(),
-        ))
-    }
-    (crates, operations)
+    crates
 }
 
-fn apply_operations_p1(mut crates: CrateStacks, operations: Operations) -> CrateStacks {
+fn apply_operations_p1(mut crates: CrateStacks, operations: &Operations) -> CrateStacks {
     for operation in operations {
         crates = apply_operation_p1(crates, operation);
     }
     crates
 }
 
-fn apply_operation_p1(mut crates: CrateStacks, operation: Operation) -> CrateStacks {
+fn apply_operation_p1(mut crates: CrateStacks, operation: &Operation) -> CrateStacks {
     for _ in 0..operation.0 as usize {
         let _crate = crates[(operation.1 - 1) as usize].pop().unwrap();
         crates[(operation.2 - 1) as usize].push(_crate);
@@ -92,14 +96,14 @@ fn apply_operation_p1(mut crates: CrateStacks, operation: Operation) -> CrateSta
     crates
 }
 
-fn apply_operations_p2(mut crates: CrateStacks, operations: Operations) -> CrateStacks {
+fn apply_operations_p2(mut crates: CrateStacks, operations: &Operations) -> CrateStacks {
     for operation in operations {
         crates = apply_operation_p2(crates, operation);
     }
     crates
 }
 
-fn apply_operation_p2(mut crates: CrateStacks, operation: Operation) -> CrateStacks {
+fn apply_operation_p2(mut crates: CrateStacks, operation: &Operation) -> CrateStacks {
     let mut intermediate_stack = vec![];
     for _ in 0..operation.0 as usize {
         let _crate = crates[(operation.1 - 1) as usize].pop().unwrap();
@@ -167,7 +171,7 @@ mod tests {
         #[case] operation: Operation,
         #[case] crates_after: CrateStacks,
     ) {
-        assert_eq!(apply_operation_p1(crates, operation), crates_after)
+        assert_eq!(apply_operation_p1(crates, &operation), crates_after)
     }
 
     #[rstest]
@@ -176,12 +180,13 @@ mod tests {
     )]
     fn test_apply_operations_p1(input_str: String, #[case] expected: CrateStacks) {
         let (crates, operations) = parse_input(&input_str);
-        assert_eq!(apply_operations_p1(crates, operations), expected)
+        assert_eq!(apply_operations_p1(crates, &operations), expected)
     }
 
     #[rstest]
     fn test_solve_part_1(input_str: String) {
-        assert_eq!(solve_part_1(&input_str), "CMZ")
+        let (crates, operations) = parse_input(&input_str);
+        assert_eq!(solve_part_1(crates, &operations), "CMZ")
     }
 
     #[rstest]
@@ -212,6 +217,6 @@ mod tests {
         #[case] operation: Operation,
         #[case] crates_after: CrateStacks,
     ) {
-        assert_eq!(apply_operation_p2(crates, operation), crates_after)
+        assert_eq!(apply_operation_p2(crates, &operation), crates_after)
     }
 }
