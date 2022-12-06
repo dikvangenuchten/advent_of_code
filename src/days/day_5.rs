@@ -81,11 +81,10 @@ fn extract_crate_part(input_str: &str) -> Vec<Vec<char>> {
     crates
 }
 
-fn apply_operations_p1(mut crates: CrateStacks, operations: &Operations) -> CrateStacks {
-    for operation in operations {
-        crates = apply_operation_p1(crates, operation);
-    }
-    crates
+fn apply_operations_p1(crates: CrateStacks, operations: &Operations) -> CrateStacks {
+    operations.iter().fold(crates, |crates, operation| {
+        apply_operation_p1(crates, operation)
+    })
 }
 
 fn apply_operation_p1(mut crates: CrateStacks, operation: &Operation) -> CrateStacks {
@@ -96,11 +95,10 @@ fn apply_operation_p1(mut crates: CrateStacks, operation: &Operation) -> CrateSt
     crates
 }
 
-fn apply_operations_p2(mut crates: CrateStacks, operations: &Operations) -> CrateStacks {
-    for operation in operations {
-        crates = apply_operation_p2(crates, operation);
-    }
-    crates
+fn apply_operations_p2(crates: CrateStacks, operations: &Operations) -> CrateStacks {
+    operations.iter().fold(crates, |crates, operation| {
+        apply_operation_p2(crates, operation)
+    })
 }
 
 fn apply_operation_p2(mut crates: CrateStacks, operation: &Operation) -> CrateStacks {
