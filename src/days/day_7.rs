@@ -25,7 +25,7 @@ fn solve_part_2(fs: &FS) -> u32 {
 #[derive(Debug, PartialEq, Eq)]
 enum FS {
     File(String, u32),
-    Dir(String, Vec<Box<FS>>, u32),
+    Dir(String, Vec<FS>, u32),
 }
 
 impl FS {
@@ -38,13 +38,13 @@ impl FS {
         if let FS::Dir(name, sub_items, size) = self {
             *size += item_size;
             if name == path {
-                sub_items.push(Box::new(item));
+                sub_items.push(item);
                 return;
             }
             let path = path
                 .strip_prefix(name.as_str())
                 .unwrap()
-                .strip_prefix("/")
+                .strip_prefix('/')
                 .unwrap();
             for sub_item in sub_items {
                 match sub_item.borrow_mut() {
@@ -88,7 +88,7 @@ impl FS {
     }
 
     fn _find_smallest_directory_larger_then(&self, min_size: u32, mut current_best: u32) -> u32 {
-        if let FS::Dir(_, sub_items, size) = self {
+        if let FS::Dir(_, sub_items, _) = self {
             for sub_item in sub_items {
                 if let FS::File(_, _) = sub_item.borrow() {
                     continue;
@@ -99,7 +99,7 @@ impl FS {
                 current_best = sub_item._find_smallest_directory_larger_then(min_size, current_best)
             }
         }
-        return current_best;
+        current_best
     }
 }
 
@@ -127,7 +127,7 @@ fn parse_input(input_str: &str) -> FS {
     let cd_regex = Regex::new(r"^\$ cd ([^\n]*)").unwrap();
     let mut root = FS::Dir("/".to_string(), vec![], 0);
     for line in input_str.trim().split('\n') {
-        if line.starts_with("$") {
+        if line.starts_with('$') {
             ls_active = false;
         }
         if ls_active {
@@ -182,29 +182,25 @@ mod tests {
             FS::Dir(
                 "/".to_string(),
                 vec![
-                    Box::new(FS::Dir(
+                    (FS::Dir(
                         "a".to_string(),
                         vec![
-                            Box::new(FS::Dir(
-                                "e".to_string(),
-                                vec![Box::new(FS::File("i".to_string(), 584))],
-                                584
-                            )),
-                            Box::new(FS::File("f".to_string(), 29116)),
-                            Box::new(FS::File("g".to_string(), 2557)),
-                            Box::new(FS::File("h.lst".to_string(), 62596)),
+                            (FS::Dir("e".to_string(), vec![(FS::File("i".to_string(), 584))], 584)),
+                            (FS::File("f".to_string(), 29116)),
+                            (FS::File("g".to_string(), 2557)),
+                            (FS::File("h.lst".to_string(), 62596)),
                         ],
                         584 + 29116 + 2557 + 62596
                     )),
-                    Box::new(FS::File("b.txt".to_string(), 14848514)),
-                    Box::new(FS::File("c.dat".to_string(), 8504156)),
-                    Box::new(FS::Dir(
+                    (FS::File("b.txt".to_string(), 14848514)),
+                    (FS::File("c.dat".to_string(), 8504156)),
+                    (FS::Dir(
                         "d".to_string(),
                         vec![
-                            Box::new(FS::File("j".to_string(), 4060174)),
-                            Box::new(FS::File("d.log".to_string(), 8033020)),
-                            Box::new(FS::File("d.ext".to_string(), 5626152)),
-                            Box::new(FS::File("k".to_string(), 7214296)),
+                            (FS::File("j".to_string(), 4060174)),
+                            (FS::File("d.log".to_string(), 8033020)),
+                            (FS::File("d.ext".to_string(), 5626152)),
+                            (FS::File("k".to_string(), 7214296)),
                         ],
                         4060174 + 8033020 + 5626152 + 7214296
                     ))
