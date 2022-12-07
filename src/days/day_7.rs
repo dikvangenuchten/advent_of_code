@@ -29,7 +29,7 @@ enum FS {
 }
 
 impl FS {
-    fn add_item(&mut self, path: &str, item: FS) -> () {
+    fn add_item(&mut self, path: &str, item: FS) {
         let item_size = match item {
             FS::File(_, size) => size,
             FS::Dir(_, _, size) => size,

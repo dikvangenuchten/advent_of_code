@@ -13,19 +13,18 @@ pub fn solve(input_str: &str) -> (usize, usize) {
 }
 
 fn solve_part_1(input_str: &str) -> usize {
-    let answer = input_str
+    input_str
         .chars()
         .tuple_windows::<(char, char, char, char)>()
         .enumerate()
-        .filter(|(_, (a, b, c, d))| a != b && a != c && a != d && b != c && b != d && c != d)
-        .next()
+        .find(|(_, (a, b, c, d))| a != b && a != c && a != d && b != c && b != d && c != d)
         .unwrap()
-        .0;
-    answer + 4
+        .0
+        + 4
 }
 
 fn solve_part_2(input_str: &str) -> usize {
-    let answer = input_str
+    input_str
         .chars()
         .enumerate()
         .fold_while(
@@ -43,8 +42,8 @@ fn solve_part_2(input_str: &str) -> usize {
             },
         )
         .into_inner()
-        .0;
-    answer + 1
+        .0
+        + 1
 }
 
 #[cfg(test)]
