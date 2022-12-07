@@ -4,6 +4,8 @@ use std::{
     str::FromStr,
 };
 
+use lazy_static::lazy_static;
+
 pub fn solve(input_str: &str) -> (u32, u32) {
     let fs = parse_input(input_str);
     let part_1 = solve_part_1(&fs);
@@ -108,12 +110,16 @@ impl FromStr for FS {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.starts_with("dir") {
-            let re = Regex::new(r"dir (?P<name>.*)").unwrap();
-            let name = re.captures(s).unwrap().name("name").unwrap().as_str();
+            lazy_static! {
+                static ref RE: Regex = Regex::new(r"dir (?P<name>.*)").unwrap();
+            }
+            let name = RE.captures(s).unwrap().name("name").unwrap().as_str();
             return Ok(FS::Dir(name.to_string(), vec![], 0));
         }
-        let re = Regex::new(r"(?P<size>[0-9]*) (?P<name>.*)").unwrap();
-        let capture = re.captures(s).unwrap();
+        lazy_static! {
+            static ref RE: Regex = Regex::new(r"(?P<size>[0-9]*) (?P<name>.*)").unwrap();
+        }
+        let capture = RE.captures(s).unwrap();
         return Ok(FS::File(
             capture.name("name").unwrap().as_str().to_string(),
             capture.name("size").unwrap().as_str().parse().unwrap(),
@@ -124,7 +130,9 @@ impl FromStr for FS {
 fn parse_input(input_str: &str) -> FS {
     let mut cur_dir = Vec::new();
     let mut ls_active = false;
-    let cd_regex = Regex::new(r"^\$ cd ([^\n]*)").unwrap();
+    lazy_static! {
+        static ref CD_REGEX: Regex = Regex::new(r"^\$ cd ([^\n]*)").unwrap();
+    }
     let mut root = FS::Dir("/".to_string(), vec![], 0);
     for line in input_str.trim().split('\n') {
         if line.starts_with('$') {
@@ -135,7 +143,7 @@ fn parse_input(input_str: &str) -> FS {
             let item = FS::from_str(line).unwrap();
 
             root.add_item(path, item);
-        } else if let Some(capture) = cd_regex.captures(line) {
+        } else if let Some(capture) = CD_REGEX.captures(line) {
             let dir_name = capture.get(1).unwrap().as_str();
             if dir_name == ".." {
                 cur_dir.pop();
