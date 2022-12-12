@@ -232,7 +232,7 @@ mod tests {
 
     #[rstest]
     fn test_parse_day_input() {
-        let input = read_day_input("day_7");
+        let input = read_day_input("day_07");
         parse_input(input.as_str());
     }
 }

@@ -125,7 +125,7 @@ mod tests {
 
     #[fixture]
     fn input_str() -> String {
-        read_day_input("test_day_5")
+        read_day_input("test_day_05")
     }
 
     #[fixture]

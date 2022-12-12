@@ -166,7 +166,7 @@ mod tests {
 
     #[fixture]
     fn actual_input() -> String {
-        read_day_input("day_9")
+        read_day_input("day_09")
     }
 
     #[fixture]
