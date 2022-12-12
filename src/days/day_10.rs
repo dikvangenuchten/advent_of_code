@@ -1,8 +1,8 @@
-use std::{num::ParseIntError, ops::Add, str::FromStr};
+use std::{num::ParseIntError, str::FromStr};
 
 pub fn solve(input: &str) -> (i32, String) {
     let instructions = parse_input(input);
-    let cpu = CPU::default().apply_many(instructions);
+    let cpu = Cpu::default().apply_many(instructions);
     let part_1 = solve_part_1(&cpu);
     let part_2 = solve_part_2(&cpu);
     (part_1, part_2)
@@ -16,7 +16,7 @@ fn parse_input(input_str: &str) -> Vec<Op> {
         .unwrap()
 }
 
-fn solve_part_1(cpu: &CPU) -> i32 {
+fn solve_part_1(cpu: &Cpu) -> i32 {
     cpu.get_signal_stregth_at(20)
         + cpu.get_signal_stregth_at(60)
         + cpu.get_signal_stregth_at(100)
@@ -25,14 +25,14 @@ fn solve_part_1(cpu: &CPU) -> i32 {
         + cpu.get_signal_stregth_at(220)
 }
 
-fn solve_part_2(cpu: &CPU) -> String {
+fn solve_part_2(cpu: &Cpu) -> String {
     (0..6)
         .map(|x| get_line(cpu, x))
         .collect::<Vec<String>>()
         .join("\n")
 }
 
-fn get_line(cpu: &CPU, line: u32) -> String {
+fn get_line(cpu: &Cpu, line: u32) -> String {
     let start = (line * 40) + 1;
     let end = start + 40;
     (start..end)
@@ -42,14 +42,14 @@ fn get_line(cpu: &CPU, line: u32) -> String {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-struct CPU {
+struct Cpu {
     register: i32,
     cycle: u32,
     states: Vec<(u32, i32)>,
 }
-impl CPU {
-    pub(crate) fn default() -> CPU {
-        CPU {
+impl Cpu {
+    pub(crate) fn default() -> Cpu {
+        Cpu {
             register: 1,
             cycle: 0,
             states: vec![(0, 1)],
@@ -57,7 +57,7 @@ impl CPU {
     }
 }
 
-impl CPU {
+impl Cpu {
     fn apply_many(self, ops: Vec<Op>) -> Self {
         ops.iter().fold(self, |cpu, op| cpu.apply_return(op))
     }
@@ -82,10 +82,6 @@ impl CPU {
         let register = self.get_register_at(x);
         let pixel_loc = (((x - 1) % 40) + 1) as i32;
         register <= pixel_loc && pixel_loc < register + 3
-    }
-
-    fn signal_strength(&self) -> i32 {
-        self.register * self.cycle as i32
     }
 
     fn get_register_at(&self, state: u32) -> i32 {
@@ -150,8 +146,8 @@ mod tests {
     }
 
     #[fixture]
-    fn test_cpu(test_operations: Vec<Op>) -> CPU {
-        CPU::default().apply_many(test_operations)
+    fn test_cpu(test_operations: Vec<Op>) -> Cpu {
+        Cpu::default().apply_many(test_operations)
     }
 
     #[rstest]
@@ -164,27 +160,15 @@ mod tests {
 
     #[rstest]
     fn test_default_cpu() {
-        let cpu = CPU::default();
+        let cpu = Cpu::default();
         assert_eq!(
             cpu,
-            CPU {
+            Cpu {
                 register: 1,
                 cycle: 0,
                 states: vec![(0, 1)],
             }
         )
-    }
-
-    #[rstest]
-    #[case(vec![Op::NoOp()], 1)]
-    #[case(vec![Op::NoOp(); 10], 10)]
-    #[case(vec![Op::NoOp(); 100], 100)]
-    #[case(vec![Op::AddX(-1); 1], 0)]
-    #[case(vec![Op::AddX(0); 100], 200)]
-    fn test_operation_on_cpu(#[case] operations: Vec<Op>, #[case] expected_signal_strength: i32) {
-        let mut cpu = CPU::default();
-        cpu = cpu.apply_many(operations);
-        assert_eq!(cpu.signal_strength(), expected_signal_strength);
     }
 
     #[rstest]
@@ -199,12 +183,12 @@ mod tests {
         #[case] state: u32,
         #[case] strength: i32,
     ) {
-        let cpu = CPU::default().apply_many(test_operations);
+        let cpu = Cpu::default().apply_many(test_operations);
         assert_eq!(cpu.get_signal_stregth_at(state), strength)
     }
 
     #[rstest]
-    fn test_solve_part_1(test_cpu: CPU) {
+    fn test_solve_part_1(test_cpu: Cpu) {
         assert_eq!(solve_part_1(&test_cpu), 13140);
     }
 
@@ -215,7 +199,7 @@ mod tests {
     #[case(4, false)]
     #[case(5, true)]
     #[case(6, true)]
-    fn test_get_pixel(test_cpu: CPU, #[case] x: u32, #[case] lit: bool) {
+    fn test_get_pixel(test_cpu: Cpu, #[case] x: u32, #[case] lit: bool) {
         assert_eq!(test_cpu.get_pixel(x), lit)
     }
 
@@ -226,13 +210,13 @@ mod tests {
     #[case(3, "#####.....#####.....#####.....#####.....")]
     #[case(4, "######......######......######......####")]
     #[case(5, "#######.......#######.......#######.....")]
-    fn test_get_line(test_cpu: CPU, #[case] x: u32, #[case] line: String) {
+    fn test_get_line(test_cpu: Cpu, #[case] x: u32, #[case] line: String) {
         assert_eq!(get_line(&test_cpu, x), line)
     }
 
     #[rstest]
     #[case("##..##..##..##..##..##..##..##..##..##..\n###...###...###...###...###...###...###.\n####....####....####....####....####....\n#####.....#####.....#####.....#####.....\n######......######......######......####\n#######.......#######.......#######.....")]
-    fn test_solve_part_2(test_cpu: CPU, #[case] expected: String) {
+    fn test_solve_part_2(test_cpu: Cpu, #[case] expected: String) {
         assert_eq!(solve_part_2(&test_cpu), expected)
     }
 }
