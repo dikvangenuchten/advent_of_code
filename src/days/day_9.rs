@@ -85,61 +85,10 @@ fn tail_movement(head: (i32, i32), mut tail: (i32, i32)) -> ((i32, i32), HashSet
 fn parse_input(input_str: &str) -> Vec<Movement> {
     input_str
         .trim()
-        .split("\n")
+        .split('\n')
         .map(Movement::from_str)
         .collect::<Result<Vec<Movement>, ParseIntError>>()
         .unwrap()
-}
-
-struct Rope {
-    head: (i32, i32),
-    tail: (i32, i32),
-}
-
-impl Rope {
-    pub fn new() -> Rope {
-        Rope {
-            head: (0, 0),
-            tail: (0, 0),
-        }
-    }
-
-    fn add_move(&mut self, movement: &Movement) -> Vec<(i32, i32)> {
-        let move_coords = movement.as_coord();
-        self.head.0 += move_coords.0;
-        self.head.1 += move_coords.1;
-        let mut tail_visits = Vec::with_capacity(movement.size() as usize);
-
-        if (manhattan_distance(self.head, self.tail)) > 2 {
-            // Disconnected
-            let x_dist = (self.head.0 - self.tail.0).abs();
-            let y_dist = (self.head.1 - self.tail.1).abs();
-            if x_dist < y_dist {
-                self.tail.0 = self.head.0;
-            }
-            if y_dist < x_dist {
-                self.tail.1 = self.head.1;
-            }
-        }
-
-        if (self.head.0 - self.tail.0).abs() > 1 {
-            let dist = self.head.0 - self.tail.0;
-
-            let min_ = min(self.head.0, self.tail.0);
-            let max_ = max(self.head.0, self.tail.0) - 1;
-            self.tail.0 = self.head.0 - dist.signum();
-            tail_visits = (min_..max_).map(|i| (i + 1, self.tail.1)).collect();
-        } else if (self.head.1 - self.tail.1).abs() > 1 {
-            let dist = self.head.1 - self.tail.1;
-
-            let min_ = min(self.head.1, self.tail.1);
-            let max_ = max(self.head.1, self.tail.1) - 1;
-            self.tail.1 = self.head.1 - dist.signum();
-            tail_visits = (min_..max_).map(|i| (self.tail.0, i + 1)).collect();
-        }
-        tail_visits.push(self.tail);
-        tail_visits
-    }
 }
 
 fn manhattan_distance(left: (i32, i32), right: (i32, i32)) -> i32 {
@@ -155,15 +104,6 @@ enum Movement {
 }
 
 impl Movement {
-    fn as_coord(&self) -> (i32, i32) {
-        match self {
-            Movement::R(x) => (*x as i32, 0),
-            Movement::U(y) => (0, *y as i32),
-            Movement::D(y) => (0, -(*y as i32)),
-            Movement::L(x) => (-(*x as i32), 0),
-        }
-    }
-
     fn size(&self) -> u32 {
         *match self {
             Movement::R(x) => x,
@@ -207,38 +147,6 @@ mod tests {
     #[case("R 2", Movement::R(2))]
     fn test_parse_input_single(#[case] input_str: &str, #[case] expected: Movement) {
         assert_eq!(Movement::from_str(input_str), Ok(expected))
-    }
-
-    #[rstest]
-    #[case(vec![Movement::R(0)], (0, 0))]
-    #[case(vec![Movement::U(0)], (0, 0))]
-    #[case(vec![Movement::D(0)], (0, 0))]
-    #[case(vec![Movement::L(0)], (0, 0))]
-    #[case(vec![Movement::R(1)], (0, 0))]
-    #[case(vec![Movement::U(1)], (0, 0))]
-    #[case(vec![Movement::D(1)], (0, 0))]
-    #[case(vec![Movement::L(1)], (0, 0))]
-    #[case(vec![Movement::R(2)], (1, 0))]
-    #[case(vec![Movement::U(2)], (0, 1))]
-    #[case(vec![Movement::D(2)], (0, -1))]
-    #[case(vec![Movement::L(2)], (-1, 0))]
-    #[case(vec![Movement::R(3)], (2, 0))]
-    #[case(vec![Movement::U(3)], (0, 2))]
-    #[case(vec![Movement::D(3)], (0, -2))]
-    #[case(vec![Movement::L(3)], (-2, 0))]
-    #[case(vec![Movement::R(0), Movement::U(0)], (0, 0))]
-    #[case(vec![Movement::R(1), Movement::U(0)], (0, 0))]
-    #[case(vec![Movement::R(0), Movement::U(1)], (0, 0))]
-    #[case(vec![Movement::R(1), Movement::U(1)], (0, 0))]
-    #[case(vec![Movement::R(1), Movement::U(2)], (1, 1))]
-    #[case(vec![Movement::R(2), Movement::U(2)], (2, 1))]
-    #[case(parse_input("R 4\nU 4\nL 3\nD 1\nR 4\nD 1\nL 5\nR 2"), (1,2))]
-    fn test_rope_movement(#[case] movements: Vec<Movement>, #[case] end_loc: (i32, i32)) {
-        let mut rope = Rope::new();
-        for movement in movements {
-            rope.add_move(&movement);
-        }
-        assert_eq!(rope.tail, end_loc)
     }
 
     #[rstest]
