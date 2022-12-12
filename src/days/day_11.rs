@@ -20,7 +20,7 @@ fn parse_input(input: &str) -> Vec<Monkey> {
 
 fn solve_part_1(input_str: &str) -> usize {
     let mut monkeys = parse_input(input_str);
-    for i in 0..20 {
+    for _ in 0..20 {
         monkeys = do_round(monkeys);
     }
     monkeys
@@ -35,11 +35,11 @@ fn solve_part_1(input_str: &str) -> usize {
 fn solve_part_2(input_str: &str) -> usize {
     let mut monkeys = parse_input(input_str);
     let modulo: usize = monkeys.iter().map(|m| m.div_check).product();
-    for i in 0..10000 {
+    for _ in 0..10000 {
         monkeys = {
             let mut monkeys = monkeys;
             for i in 0..monkeys.len() {
-                while monkeys[i].items.len() > 0 {
+                while !monkeys[i].items.is_empty() {
                     let item = monkeys[i].items.pop_front().unwrap();
                     let wl = monkeys[i].operation.new_wory_level(item);
                     let wl = wl % modulo;
@@ -67,7 +67,7 @@ fn solve_part_2(input_str: &str) -> usize {
 
 fn do_round(mut monkeys: Vec<Monkey>) -> Vec<Monkey> {
     for i in 0..monkeys.len() {
-        while monkeys[i].items.len() > 0 {
+        while !monkeys[i].items.is_empty() {
             let item = monkeys[i].items.pop_front().unwrap();
             let wl = monkeys[i].operation.new_wory_level(item);
             let wl = wl / 3;
@@ -124,7 +124,7 @@ impl FromStr for Operation {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (left, operator, right): (&str, &str, &str) = s
-            .split_once("=")
+            .split_once('=')
             .unwrap()
             .1
             .trim()
@@ -196,17 +196,6 @@ impl FromStr for Monkey {
             false_monkey,
             inspected: 0,
         })
-    }
-}
-
-impl Monkey {
-    fn pop(&mut self) -> (usize, usize) {
-        let item = self.items.pop_front().unwrap();
-        let wl = self.operation.new_wory_level(item);
-        if wl % self.div_check == 0 {
-            return (self.true_monkey, wl);
-        }
-        (self.false_monkey, wl)
     }
 }
 
