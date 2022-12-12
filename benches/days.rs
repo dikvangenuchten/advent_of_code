@@ -1,5 +1,5 @@
 use advent_of_code_2022::days::{
-    day_1, day_2, day_3, day_4, day_5, day_6, day_7, day_8, read_day_input,
+    day_1, day_2, day_3, day_4, day_5, day_6, day_7, day_8, day_9, read_day_input,
 };
 use advent_of_code_2022::run_all_days;
 
@@ -45,6 +45,11 @@ fn bench_day_8(c: &mut Criterion) {
     c.bench_function("day 8", |b| b.iter(|| day_8::solve(black_box(&input))));
 }
 
+fn bench_day_9(c: &mut Criterion) {
+    let input = read_day_input("day_9");
+    c.bench_function("day 9", |b| b.iter(|| day_9::solve(black_box(&input))));
+}
+
 fn bench_all_days(c: &mut Criterion) {
     c.bench_function("All days", |b| b.iter(|| run_all_days()));
 }
@@ -60,5 +65,6 @@ criterion_group!(
     bench_day_6,
     bench_day_7,
     bench_day_8,
+    bench_day_9,
 );
 criterion_main!(benches);

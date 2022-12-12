@@ -1,7 +1,7 @@
 pub mod days;
 use std::time::{self, Duration};
 
-use days::{day_1, day_2, day_3, day_4, day_5, day_6, day_7, day_8, read_day_input};
+use days::{day_1, day_2, day_3, day_4, day_5, day_6, day_7, day_8, day_9, read_day_input};
 
 pub fn run_all_days() -> Vec<Duration> {
     let start = time::Instant::now();
@@ -52,8 +52,14 @@ pub fn run_all_days() -> Vec<Duration> {
     println!("Solution for day_8b: {day_8b}");
     let day_8_time = start.elapsed();
 
+    let start = time::Instant::now();
+    let (day_9a, day_9b) = day_9::solve(&read_day_input("day_9"));
+    println!("Solution for day_9a: {day_9a}");
+    println!("Solution for day_9b: {day_9b}");
+    let day_9_time = start.elapsed();
+
     vec![
         day_1_time, day_2_time, day_3_time, day_4_time, day_5_time, day_6_time, day_7_time,
-        day_8_time,
+        day_8_time, day_9_time,
     ]
 }

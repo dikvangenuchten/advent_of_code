@@ -8,6 +8,7 @@ pub mod day_5;
 pub mod day_6;
 pub mod day_7;
 pub mod day_8;
+pub mod day_9;
 
 pub fn read_day_input(day: &str) -> String {
     let file_path = format!("inputs/{day}.txt");
