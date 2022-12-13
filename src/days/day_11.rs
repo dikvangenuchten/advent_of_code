@@ -232,7 +232,7 @@ Monkey {
 
     #[rstest]
     fn test_round(mut test_monkeys: Vec<Monkey>) {
-        for i in 0..20 {
+        for _ in 0..20 {
             test_monkeys = do_round(test_monkeys);
         }
         assert_eq!(
