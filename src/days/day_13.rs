@@ -10,7 +10,7 @@ pub fn solve(input: &str) -> (usize, usize) {
     (part_1, part_2)
 }
 
-fn solve_part_1(pairs: &Vec<(Packet, Packet)>) -> usize {
+fn solve_part_1(pairs: &[(Packet, Packet)]) -> usize {
     pairs
         .iter()
         .enumerate()
@@ -44,7 +44,7 @@ fn parse_pair(input: &str) -> (Packet, Packet) {
     (Packet::from_str(l).unwrap(), Packet::from_str(r).unwrap())
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Ord)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 enum Packet {
     List(Vec<Packet>),
     Val(u64),
@@ -58,32 +58,28 @@ impl FromStr for Packet {
     }
 }
 
-impl PartialOrd for Packet {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        let left = self;
-        let right = other;
-
+impl Ord for Packet {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         match (self, other) {
-            (Packet::Val(x), Packet::Val(y)) => x.partial_cmp(y),
+            (Packet::Val(x), Packet::Val(y)) => x.cmp(y),
             (Packet::List(x), Packet::List(y)) => {
-                println!("Both list");
                 for (l, r) in x.iter().zip(y) {
-                    match l.partial_cmp(r).unwrap() {
+                    match l.cmp(r) {
                         std::cmp::Ordering::Equal => continue,
-                        not_equal => return Some(not_equal),
+                        not_equal => return not_equal,
                     }
                 }
-                x.len().partial_cmp(&y.len())
+                x.len().cmp(&y.len())
             }
-            (Packet::List(_), Packet::Val(y)) => {
-                println!("Left is list");
-                self.partial_cmp(&Packet::List(vec![Packet::Val(*y)]))
-            }
-            (Packet::Val(x), Packet::List(_)) => {
-                println!("Right is list");
-                Packet::List(vec![Packet::Val(*x)]).partial_cmp(other)
-            }
+            (Packet::List(_), Packet::Val(y)) => self.cmp(&Packet::List(vec![Packet::Val(*y)])),
+            (Packet::Val(x), Packet::List(_)) => Packet::List(vec![Packet::Val(*x)]).cmp(other),
         }
+    }
+}
+
+impl PartialOrd for Packet {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
 
@@ -160,16 +156,6 @@ mod tests {
     }
 
     #[rstest]
-    fn test_sorting(example_pairs: Vec<(Packet, Packet)>) {
-        let sorted: Vec<_> = example_pairs
-            .iter()
-            .flat_map(|(left, right)| vec![left, right])
-            .sorted()
-            .collect();
-        assert!(false)
-    }
-
-    // #[rstest]
     fn test_solve_part_2(mut example_pairs: Vec<(Packet, Packet)>) {
         assert_eq!(solve_part_2(&mut example_pairs), 140)
     }

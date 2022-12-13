@@ -50,8 +50,8 @@ pub fn run_all_days() -> Vec<DayResult> {
     let (day_5a, day_5b) = day_05::solve(&read_day_input("day_05"));
     let day_5_time = start.elapsed();
     let day_5 = DayResult {
-        part_1: format!("{}", day_5a),
-        part_2: format!("{}", day_5b),
+        part_1: day_5a,
+        part_2: day_5b,
         time: day_5_time,
     };
 
@@ -96,7 +96,7 @@ pub fn run_all_days() -> Vec<DayResult> {
     let day_10_time = start.elapsed();
     let day_10 = DayResult {
         part_1: format!("{}", day_10a),
-        part_2: format!("{}", day_10b),
+        part_2: day_10b,
         time: day_10_time,
     };
 
