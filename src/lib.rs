@@ -136,8 +136,17 @@ pub fn run_all_days() -> Vec<DayResult> {
         time: day_14_time,
     };
 
+    let start = time::Instant::now();
+    let (day_15a, day_15b) = day_15::solve(&read_day_input("day_15"));
+    let day_15_time = start.elapsed();
+    let day_15 = DayResult {
+        part_1: format!("{}", day_15a),
+        part_2: format!("{}", day_15b),
+        time: day_15_time,
+    };
+
     vec![
         day_1, day_2, day_3, day_4, day_5, day_6, day_7, day_8, day_9, day_10, day_11, day_12,
-        day_13, day_14,
+        day_13, day_14, day_15,
     ]
 }

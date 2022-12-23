@@ -61,7 +61,10 @@ fn parse_rock(input_str: &str) -> HashSet<(u16, u16)> {
         .split(" -> ")
         .map(|rock_str| {
             let (x, y) = rock_str.split_once(',').unwrap();
-            (x.parse::<u16>().unwrap(), y.parse::<u16>().unwrap())
+            (
+                x.parse::<u16>().expect(&format!("{x} should be parsable")),
+                y.parse::<u16>().expect(&format!("{y} should be parsable")),
+            )
         })
         .tuple_windows()
         .flat_map(|((l_x, l_y), (r_x, r_y))| {

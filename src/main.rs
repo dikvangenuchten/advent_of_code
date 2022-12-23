@@ -15,7 +15,7 @@ pub fn main() {
 
     println!(
         "Solving {} days took {:#?}",
-        results.len() + 1,
+        results.len(),
         all_solution_time
     );
 }

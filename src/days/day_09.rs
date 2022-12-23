@@ -15,13 +15,6 @@ pub fn solve(input: &str) -> (usize, usize) {
 fn solve_part_1(movements: &Vec<Movement>) -> usize {
     let rope = vec![(0, 0); 2];
     simulate_movement(rope, movements).len()
-    // let mut history = HashSet::with_capacity(movements.len());
-    // let mut rope = Rope::new();
-    // history.insert(rope.tail);
-    // for movement in movements {
-    //     history.extend(rope.add_move(movement));
-    // }
-    // history.len()
 }
 
 fn solve_part_2(movements: &Vec<Movement>) -> usize {
